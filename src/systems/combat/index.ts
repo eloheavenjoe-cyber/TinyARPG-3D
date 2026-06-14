@@ -7,6 +7,6 @@ export {
   CooldownDuration,
   IsDead,
 } from './components';
-export { DEFAULT_SKILLS, DEFAULT_COMBAT_CONFIG } from './types';
+export { DEFAULT_SKILLS, DEFAULT_COMBAT_CONFIG, SKILL_CODE_MAP, skillIdFromCode } from './types';
 export type { ActiveSkill, SkillRegistry, SkillRangeType, CombatConfig } from './types';
 export { registerCombatDebugCommands } from './debugCommands';

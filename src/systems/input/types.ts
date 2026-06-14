@@ -11,6 +11,8 @@ export interface InputConfig {
   skillKeys: Record<string, number>;
   /** Interact key (case-insensitive, both lower and upper are mapped). */
   interactKey: string;
+  /** Whether left mouse click triggers Interact intent. */
+  mouseInteract: boolean;
 }
 
 export const DEFAULT_INPUT_CONFIG: InputConfig = {
@@ -36,4 +38,5 @@ export const DEFAULT_INPUT_CONFIG: InputConfig = {
     '4': 3,
   },
   interactKey: 'e',
+  mouseInteract: true,
 };

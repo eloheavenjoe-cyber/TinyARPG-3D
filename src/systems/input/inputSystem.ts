@@ -11,6 +11,7 @@ import { DEFAULT_INPUT_CONFIG } from './types';
 
 const _heldKeys = new Set<string>();
 const _justPressedKeys = new Set<string>();
+let _mouseClicked = false;
 let _initialized = false;
 
 // Look-up tables built from the active config
@@ -66,6 +67,15 @@ export function initInputSystem(config: InputConfig = DEFAULT_INPUT_CONFIG): voi
     _heldKeys.clear();
     _justPressedKeys.clear();
   });
+
+  // Mouse click → INTERACT intent
+  if (config.mouseInteract) {
+    window.addEventListener('mousedown', (e: MouseEvent) => {
+      if (e.button === 0) { // left button only
+        _mouseClicked = true;
+      }
+    });
+  }
 
   if (import.meta.env.DEV) {
     console.log('[Input] Keyboard listeners initialised');
@@ -138,6 +148,14 @@ export function inputSystem(_world: World): void {
       });
     }
   }
+
+  // ---- Mouse click → INTERACT intent ----
+  if (_mouseClicked) {
+    _mouseClicked = false;
+    pushIntent({
+      type: IntentType.Interact,
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -148,6 +166,7 @@ export function inputSystem(_world: World): void {
 export function _resetInputSystem(): void {
   _heldKeys.clear();
   _justPressedKeys.clear();
+  _mouseClicked = false;
   _initialized = false;
   _buildMaps(DEFAULT_INPUT_CONFIG);
 }

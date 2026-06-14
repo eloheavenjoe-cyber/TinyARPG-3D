@@ -9,7 +9,7 @@ import type { World } from '@/core';
 import { getFrameIntents, getDeltaTime } from '@/core';
 import { IntentType } from '@/shared';
 import { IsCharacter } from '@/systems/movement';
-import { Damage, Life, IsDead } from '@/systems/combat';
+import { Damage, Life, IsDead, skillIdFromCode } from '@/systems/combat';
 import { MovementSpeed } from '@/systems/movement';
 import { SkillSlot, CooldownTimer } from '@/systems/combat';
 import { BaseStats, BuffInstance } from './components';
@@ -18,7 +18,6 @@ import {
   SKILL_BUFF_MAP,
   codeFromBuffId,
   buffIdFromCode,
-  skillIdFromCode,
   STAT_DAMAGE,
   STAT_MAX_LIFE,
   STAT_MOVEMENT_SPEED,

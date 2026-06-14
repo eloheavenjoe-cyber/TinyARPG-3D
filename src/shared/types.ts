@@ -118,11 +118,78 @@ export interface SaveSlot {
 
 // ----- Render -----
 
+/**
+ * A single mesh instance to be rendered in the 3D scene.
+ * The render system converts 2D ECS position → 3D isometric.
+ */
+export interface MeshInstance {
+  entityId: number;
+  meshType: MeshType;
+  /** 3D world position (after isometric projection). */
+  position: Vec3;
+  /** Y-axis rotation in radians (derived from FacingDirection). */
+  facingAngle: number;
+  scale: number;
+  isDead: boolean;
+}
+
+/** Kinds of renderable entities in the scene. */
+export type MeshType =
+  | 'character'
+  | 'enemy_melee'
+  | 'enemy_ranged'
+  | 'ground_item';
+
+/**
+ * Floating damage number displayed above an entity.
+ */
+export interface DamageNumber {
+  /** 3D position where the number appeared. */
+  position: Vec3;
+  /** Raw damage value to display. */
+  value: number;
+  /** Seconds remaining before this number fades/disappears. */
+  lifetime: number;
+}
+
+/**
+ * Label drawn above a ground loot item.
+ */
+export interface GroundItemLabel {
+  position: Vec3;
+  /** Display text (e.g. item name). */
+  text: string;
+  /** 0 = Normal, 1 = Magic, 2 = Rare. */
+  rarityCode: number;
+}
+
+/**
+ * Telegraph decal for skill AoE previews (projected onto the ground).
+ */
+export interface TelegraphDecal {
+  position: Vec3;
+  shape: 'circle' | 'cone' | 'line';
+  /** Radius in world units (for circle), length (for line). */
+  radius: number;
+  /** Orientation angle in radians. */
+  angle: number;
+  /** Seconds remaining before this decal disappears. */
+  lifetime: number;
+  /** CSS colour string (e.g. '#ff4444'). */
+  color: string;
+}
+
+/**
+ * Immutable per-frame snapshot of everything the render layer needs.
+ * Produced by the projection phase of renderSystem, consumed by the
+ * Babylon.js application phase.
+ */
 export interface RenderSnapshot {
-  meshInstances: unknown[];
-  damageNumbers: unknown[];
-  groundItemLabels: unknown[];
-  telegraphDecals: unknown[];
+  meshInstances: MeshInstance[];
+  damageNumbers: DamageNumber[];
+  groundItemLabels: GroundItemLabel[];
+  telegraphDecals: TelegraphDecal[];
+  /** If > 0, the render phase freezes for this many frames (ECS still runs). */
   hitStopFrames: number;
 }
 

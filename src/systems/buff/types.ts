@@ -95,18 +95,3 @@ export const SKILL_BUFF_MAP: Record<string, string> = {
 export const STAT_DAMAGE = 'damage';
 export const STAT_MAX_LIFE = 'maxLife';
 export const STAT_MOVEMENT_SPEED = 'movementSpeed';
-
-// ---------------------------------------------------------------------------
-// Skill numeric code → string id (mirrors the map in combat/combatSystem.ts)
-// ---------------------------------------------------------------------------
-
-const SKILL_CODE_MAP: Record<number, string> = {
-  1: 'basic_attack',
-  2: 'cleave',
-  3: 'power_strike',
-  4: 'war_cry',
-};
-
-export function skillIdFromCode(code: number): string {
-  return SKILL_CODE_MAP[code] ?? '';
-}

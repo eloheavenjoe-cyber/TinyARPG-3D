@@ -89,3 +89,26 @@ export const DEFAULT_COMBAT_CONFIG: CombatConfig = {
   meleeRange: 2.0,
   hitStopFrames: 0,
 };
+
+// ---------------------------------------------------------------------------
+// Skill code mapping — canonical location (used by combat and buff systems)
+// ---------------------------------------------------------------------------
+
+/**
+ * Map from numeric skill code (stored in SkillSlot) to skill id string.
+ *   1 → 'basic_attack'
+ *   2 → 'cleave'
+ *   3 → 'power_strike'
+ *   4 → 'war_cry'
+ */
+export const SKILL_CODE_MAP: Record<number, string> = {
+  1: 'basic_attack',
+  2: 'cleave',
+  3: 'power_strike',
+  4: 'war_cry',
+};
+
+/** Resolve a numeric skill code to its string id. */
+export function skillIdFromCode(code: number): string {
+  return SKILL_CODE_MAP[code] ?? '';
+}

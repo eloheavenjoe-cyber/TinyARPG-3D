@@ -4,6 +4,7 @@ import { getFrameIntents, getDeltaTime } from '@/core';
 import { IntentType } from '@/shared';
 import { Position, FacingDirection, IsCharacter } from '@/systems/movement';
 import { IsEnemy, AIState, AttackTimer, AttackCooldown } from '@/systems/ai';
+import { KnockbackImpulse, DEFAULT_PHYSICS_CONFIG } from '@/systems/physics';
 import {
   Life,
   Damage,
@@ -12,7 +13,7 @@ import {
   CooldownDuration,
   IsDead,
 } from './components';
-import { DEFAULT_SKILLS, DEFAULT_COMBAT_CONFIG } from './types';
+import { DEFAULT_SKILLS, DEFAULT_COMBAT_CONFIG, skillIdFromCode } from './types';
 import type { CombatConfig } from './types';
 
 // ---------------------------------------------------------------------------
@@ -54,24 +55,6 @@ const attackingEnemyQuery = defineQuery([
 const NUM_SLOTS = 4;
 const config: CombatConfig = DEFAULT_COMBAT_CONFIG;
 const skillRegistry = DEFAULT_SKILLS;
-
-/**
- * Map from numeric skill code (stored in SkillSlot) to skill id string.
- *   1 → 'basic_attack'
- *   2 → 'cleave'
- *   3 → 'power_strike'
- *   4 → 'war_cry'
- */
-const SKILL_CODE_MAP: Record<number, string> = {
-  1: 'basic_attack',
-  2: 'cleave',
-  3: 'power_strike',
-  4: 'war_cry',
-};
-
-function skillIdFromCode(code: number): string {
-  return SKILL_CODE_MAP[code] ?? '';
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -262,6 +245,21 @@ export function combatSystem(world: World): void {
           if (!hasComponent(world, IsDead, target)) {
             addComponent(world, IsDead, target);
           }
+        }
+
+        // Knockback on heavy strikes (damageMultiplier >= threshold)
+        if (skill.damageMultiplier >= DEFAULT_PHYSICS_CONFIG.knockbackThreshold) {
+          if (!hasComponent(world, KnockbackImpulse, target)) {
+            addComponent(world, KnockbackImpulse, target);
+          }
+          // Direction: away from the character
+          const dx = Position.x[target] - Position.x[charEid];
+          const dy = Position.y[target] - Position.y[charEid];
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          KnockbackImpulse.x[target] = dx / dist;
+          KnockbackImpulse.y[target] = dy / dist;
+          KnockbackImpulse.magnitude[target] =
+            DEFAULT_PHYSICS_CONFIG.knockbackForce * skill.damageMultiplier;
         }
 
         // Start cooldown (will be ticked down next frame)
