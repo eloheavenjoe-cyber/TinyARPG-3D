@@ -1,0 +1,2 @@
+/** Portal feature types — to be defined during implementation. */
+export {};
